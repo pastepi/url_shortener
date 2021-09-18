@@ -51,27 +51,46 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newLink := models.Link{
-		OriginURL: reqURL.Url,
-		ShortURL:  shortener.ShortenURL(reqURL.Url),
+	storage.CheckLink(&reqURL.Url) // Check for Protocol/Scheme
+	storageURLs := storage.ReadURLs()
+
+	var (
+		newLink  = storage.FindByOrigURL(reqURL.Url, storageURLs)
+		resp     []byte
+		marshErr error
+	)
+
+	// if newLink is not empty, return the link from the storage
+	// else, create a new entry and return it
+	if newLink != (models.Link{}) {
+		resp, marshErr = json.Marshal(newLink)
+
+		if marshErr != nil {
+			panic(err)
+		}
+	} else {
+		newLink = models.Link{
+			OriginURL: reqURL.Url,
+			ShortURL:  shortener.ShortenURL(reqURL.Url),
+		}
+		resp, marshErr = json.Marshal(newLink)
+		if marshErr != nil {
+			panic(err)
+		}
+		storage.AppendLink(&storageURLs, &newLink)
+		jsonURLs := storage.MarshalURLs(storageURLs)
+		storage.SaveURLs(jsonURLs)
 	}
 
-	storageURLs := storage.ReadURLs()
-	storage.AppendLink(&storageURLs, &newLink)
-	jsonURLs := storage.MarshalURLs(storageURLs)
-	storage.SaveURLs(jsonURLs)
-
-	resp, err := json.Marshal(newLink)
-
-	w.Write([]byte(resp))
+	w.Write(resp)
 }
 
 func handleRedirect(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	newURL := storage.FindOrigURL(vars["ShortURL"], storage.ReadURLs())
-	if newURL == "notfound" {
-		newURL = "http://localhost:3000"
+	newURL := storage.FindByShortURL(vars["ShortURL"], storage.ReadURLs())
+	if newURL == (models.Link{}) {
+		newURL.OriginURL = "http://localhost:3000"
 	}
-	http.Redirect(w, r, newURL, http.StatusSeeOther)
+	http.Redirect(w, r, newURL.OriginURL, http.StatusSeeOther)
 }

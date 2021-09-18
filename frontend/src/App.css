@@ -6,7 +6,7 @@
 
 body {
     margin: 0;
-    background-color: rgb(172, 172, 172);
+    background-color: rgb(54, 54, 54);
 } 
 
 div#root {
@@ -15,14 +15,34 @@ div#root {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+div:first-child {
+    position: relative
 }
 
 form {
     background: rgb(226, 226, 226); 
-    border: 10px solid rgb(241, 197, 0);
+    border: 10px solid rgb(254, 208, 0);
     border-radius: 5px;
     padding: 10px;
     height: 100px;
+    box-shadow: inset 2px 2px black,
+                inset -2px -2px black,
+                inset -2px 2px black,
+                inset 2px -2px black;
+}
+
+form::after {
+    position: absolute;
+    bottom: 11px;
+    right: 11px;
+    content: "For LiveChat©";
+    font-weight: 700;
+    font-size: 8px;
+    background-color: rgb(254, 208, 0);
+    border: 1px solid black;
 }
 
 form input {

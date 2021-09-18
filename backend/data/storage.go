@@ -49,7 +49,6 @@ func ReadURLs() []models.Link {
 
 // Append models.Link struct to a slice
 func AppendLink(u *[]models.Link, l *models.Link) {
-	checkLink(&l.OriginURL)
 	*u = append(*u, *l)
 }
 
@@ -59,26 +58,26 @@ func MarshalURLs(u []models.Link) []byte {
 	return jsonURLs
 }
 
-func FindShortURL(l string, u []models.Link) string {
+func FindByOrigURL(l string, u []models.Link) models.Link {
 	for _, v := range u {
 		if v.OriginURL == l {
-			return v.ShortURL
+			return v
 		}
 	}
-	return ""
+	return models.Link{}
 }
 
-func FindOrigURL(l string, u []models.Link) string {
+func FindByShortURL(l string, u []models.Link) models.Link {
 	for _, v := range u {
 		if v.ShortURL == l {
-			return v.OriginURL
+			return v
 		}
 	}
-	return "notfound"
+	return models.Link{}
 }
 
 // Checks for the scheme/protocol of the link - if none exists, adds "HTTPS"
-func checkLink(l *string) {
+func CheckLink(l *string) {
 	p, err := url.Parse(*l)
 	if err != nil {
 		panic(err)
