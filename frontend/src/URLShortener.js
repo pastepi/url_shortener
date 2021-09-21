@@ -1,5 +1,5 @@
 import { useState } from "react"
-// import './App.css'
+
 
 const defaultContainerStyle = {minHeight: "150px", margin: "0", minWidth: "300px", display: "flex", alignItems: "center", justifyContent: "center"};
 const defaultFormStyle = {display: "flex", flexDirection: "column", alignItems: "center", minHeight: "150px", justifyContent: "space-around"};
@@ -32,7 +32,7 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
     
         if (!!pattern.test(srcURL)) {
           try {
-            new URL(srcURL)
+            new URL(srcURL);
           } catch (_) { // MalformedURLException
             setURL("https://" + url);
           }

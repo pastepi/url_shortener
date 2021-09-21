@@ -41,14 +41,13 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 
 	p, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
-
-	if err := json.Unmarshal(p, &reqURL); err != nil {
-		panic(err)
-	}
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	if err := json.Unmarshal(p, &reqURL); err != nil {
+		panic(err)
 	}
 
 	storage.CheckLink(&reqURL.Url) // Check for Protocol/Scheme
@@ -87,8 +86,11 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 
 func handleRedirect(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
-	newURL := storage.FindByShortURL(vars["ShortURL"], storage.ReadURLs())
+	shortURL, ok := vars["ShortURL"]
+	if ok != true {
+		panic("Could not find short URL in body of the request.")
+	}
+	newURL := storage.FindByShortURL(shortURL, storage.ReadURLs())
 	if newURL == (models.Link{}) {
 		newURL.OriginURL = "http://localhost:3000"
 	}
