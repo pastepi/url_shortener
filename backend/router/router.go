@@ -50,7 +50,7 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	storage.CheckLink(&reqURL.Url) // Check for Protocol/Scheme
+	// storage.CheckLink(&reqURL.Url) // Check for Protocol/Scheme
 	storageURLs := storage.ReadURLs()
 
 	var (

@@ -30,16 +30,7 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
         '(\\?[;&a-z\\d%_.~+=-]*)?'+                         // query string
         '(\\#[-a-z\\d_]*)?$','i');                          // fragment locator
     
-        if (!!pattern.test(srcURL)) {
-          try {
-            new URL(srcURL);
-          } catch (_) { // MalformedURLException
-            setURL("https://" + url);
-          }
-          return true
-        } else {
-          return !!pattern.test(srcURL);
-        }
+        return pattern.test(srcURL);
     }
 
     const handleButtonClick = (e) => {
@@ -49,12 +40,23 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
       }
 
       if (isValidURL(url)) {
+        let srcURL = url;
+
+        // Checks for the scheme/protocol of the link 
+        // - if no valid one exists, adds "HTTPS"
+        try {
+          new URL(srcURL);
+        } catch (_) { // MalformedURLException
+          srcURL = "https://" + srcURL;
+          setURL(srcURL);
+        }
+
         fetch(myHost + "/URL", {
           method: "POST", 
           headers: {
           "Content-Type": "application/json"
           },
-          body: JSON.stringify({url})
+          body: JSON.stringify({url:srcURL})
       }).then(response => response.json()
       ).then(data => setShortURL(data.ShortURL))
       } else {

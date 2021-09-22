@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/json"
-	"net/url"
 	"os"
 
 	models "github.com/pastepi/url_shortener/backend/models"
@@ -76,14 +75,15 @@ func FindByShortURL(l string, u []models.Link) models.Link {
 	return models.Link{}
 }
 
+// ** HANDLED ON THE FRONTEND **
 // Checks for the scheme/protocol of the link - if none exists, adds "HTTPS"
-func CheckLink(l *string) {
-	p, err := url.Parse(*l)
-	if err != nil {
-		panic(err)
-	}
+// func CheckLink(l *string) {
+// 	p, err := url.Parse(*l)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	if p.Scheme == "" {
-		*l = "https://" + *l
-	}
-}
+// 	if p.Scheme == "" {
+// 		*l = "https://" + *l
+// 	}
+// }
