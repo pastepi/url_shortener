@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	storage "github.com/pastepi/url_shortener/backend/data"
 	models "github.com/pastepi/url_shortener/backend/models"
+	"github.com/pastepi/url_shortener/backend/mysqldb"
 	"github.com/pastepi/url_shortener/backend/shortener"
 	"github.com/rs/cors"
 )
@@ -50,17 +50,15 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	// storage.CheckLink(&reqURL.Url) // Check for Protocol/Scheme
-	storageURLs := storage.ReadURLs()
-
 	var (
-		newLink  = storage.FindByOrigURL(reqURL.Url, storageURLs)
-		resp     []byte
-		marshErr error
+		newLink, _ = mysqldb.GetLinkByOriginURL(reqURL.Url)
+		resp       []byte
+		marshErr   error
 	)
 
-	// if newLink is not empty, return the link from the storage
-	// else, create a new entry and return it
+	// if newLink is not empty, return the link from the database
+	// else, create a new entry, save it to the database and return it
+
 	if newLink != (models.Link{}) {
 		resp, marshErr = json.Marshal(newLink)
 
@@ -72,13 +70,16 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 			OriginURL: reqURL.Url,
 			ShortURL:  shortener.ShortenURL(reqURL.Url),
 		}
+
+		urlID, _ := mysqldb.AddLink(newLink)
+		newLink.ID = urlID
+
 		resp, marshErr = json.Marshal(newLink)
 		if marshErr != nil {
 			panic(err)
 		}
-		storage.AppendLink(&storageURLs, &newLink)
-		jsonURLs := storage.MarshalURLs(storageURLs)
-		storage.SaveURLs(jsonURLs)
+
+		log.Printf("Added new link with id %d", urlID)
 	}
 
 	w.Write(resp)
@@ -90,7 +91,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 	if ok != true {
 		panic("Could not find short URL in body of the request.")
 	}
-	newURL := storage.FindByShortURL(shortURL, storage.ReadURLs())
+	newURL, _ := mysqldb.GetLinkByShortURL(shortURL)
 	if newURL == (models.Link{}) {
 		newURL.OriginURL = "http://localhost:3000"
 	}
