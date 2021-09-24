@@ -15,6 +15,9 @@ import (
 )
 
 func ServerInit() {
+	db := mysqldb.OpenConn()
+	defer db.Close()
+
 	r := mux.NewRouter()
 
 	r.HandleFunc("/{ShortURL}", handleRedirect).Methods("GET")

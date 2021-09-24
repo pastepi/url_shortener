@@ -9,22 +9,23 @@ import (
 	links "github.com/pastepi/url_shortener/backend/models"
 )
 
-func openConn() *sql.DB {
-	db, err := sql.Open("mysql",
+var db *sql.DB
+
+func OpenConn() *sql.DB {
+	var err error
+	db, err = sql.Open("mysql",
 		"root:pass@tcp(127.0.0.1:3306)/links")
 	if err != nil {
 		log.Fatal(err)
 	}
 	db.SetMaxOpenConns(20)
 	db.SetMaxIdleConns(20)
+	db.SetConnMaxIdleTime(10000)
 
 	return db
 }
 
 func GetLinkByShortURL(shortLink string) (links.Link, error) {
-	db := openConn()
-	defer db.Close()
-
 	var url links.Link
 
 	row := db.QueryRow("SELECT * FROM urls WHERE ShortURL = ?", shortLink)
@@ -39,9 +40,6 @@ func GetLinkByShortURL(shortLink string) (links.Link, error) {
 }
 
 func GetLinkByOriginURL(originLink string) (links.Link, error) {
-	db := openConn()
-	defer db.Close()
-
 	var url links.Link
 
 	row := db.QueryRow("SELECT * FROM urls WHERE OriginURL = ?", originLink)
@@ -56,9 +54,6 @@ func GetLinkByOriginURL(originLink string) (links.Link, error) {
 }
 
 func AddLink(link links.Link) (int64, error) {
-	db := openConn()
-	defer db.Close()
-
 	result, err := db.Exec("INSERT INTO urls (OriginURL, ShortURL) VALUES (?, ?)", link.OriginURL, link.ShortURL)
 	if err != nil {
 		return 0, fmt.Errorf("AddLink: %v", err)
