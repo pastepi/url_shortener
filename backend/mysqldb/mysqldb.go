@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
+	"os"
 
+	"github.com/go-sql-driver/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	links "github.com/pastepi/url_shortener/backend/models"
 )
@@ -13,8 +16,15 @@ var db *sql.DB
 
 func OpenConn() *sql.DB {
 	var err error
-	db, err = sql.Open("mysql",
-		"root:pass@tcp(127.0.0.1:3306)/links")
+	cfg := mysql.Config{
+		User:   os.Getenv("DB_USERNAME"),
+		Passwd: os.Getenv("DB_PASSWORD"),
+		Net:    "tcp",
+		Addr:   net.JoinHostPort(os.Getenv("DB_HOST"), os.Getenv("DB_PORT")),
+		DBName: os.Getenv("DB_NAME"),
+	}
+
+	db, err = sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}

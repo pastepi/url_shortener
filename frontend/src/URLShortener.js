@@ -9,7 +9,7 @@ const defaultLinkStyle = {fontSize: "1.2rem"};
 const defaultErrorStyle = {color: "red"};
 
 
-const myHost = "http://localhost:8080";
+const myHost = process.env.REACT_APP_BACKEND_URL;
 
 
 const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, linkStyle, errorStyle }) => {

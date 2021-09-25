@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	models "github.com/pastepi/url_shortener/backend/models"
 	"github.com/pastepi/url_shortener/backend/mysqldb"
 	"github.com/pastepi/url_shortener/backend/shortener"
@@ -15,6 +18,11 @@ import (
 )
 
 func ServerInit() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	db := mysqldb.OpenConn()
 	defer db.Close()
 
@@ -28,7 +36,7 @@ func ServerInit() {
 
 	srv := &http.Server{
 		Handler:      handler,
-		Addr:         "localhost:8080",
+		Addr:         net.JoinHostPort(os.Getenv("BACKEND_HOST"), os.Getenv("BACKEND_PORT")),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
@@ -96,7 +104,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 	}
 	newURL, _ := mysqldb.GetLinkByShortURL(shortURL)
 	if newURL == (models.Link{}) {
-		newURL.OriginURL = "http://localhost:3000"
+		newURL.OriginURL = net.JoinHostPort(os.Getenv("FRONTEND_HOST"), os.Getenv("FRONTEND_PORT"))
 	}
 	http.Redirect(w, r, newURL.OriginURL, http.StatusSeeOther)
 }
