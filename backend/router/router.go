@@ -76,8 +76,9 @@ func handleURL(w http.ResponseWriter, r *http.Request) {
 		if marshErr != nil {
 			panic(err)
 		}
+
 		storage.AppendLink(&storageURLs, &newLink)
-		jsonURLs := storage.MarshalURLs(storageURLs)
+		jsonURLs, _ := json.MarshalIndent(storageURLs, "", "\t")
 		storage.SaveURLs(jsonURLs)
 	}
 

@@ -52,12 +52,6 @@ func AppendLink(u *[]models.Link, l *models.Link) {
 	*u = append(*u, *l)
 }
 
-// Marshal URLs slice to JSON
-func MarshalURLs(u []models.Link) []byte {
-	jsonURLs, _ := json.MarshalIndent(u, "", "\t")
-	return jsonURLs
-}
-
 func FindByOrigURL(l string, u []models.Link) models.Link {
 	for _, v := range u {
 		if v.OriginURL == l {
