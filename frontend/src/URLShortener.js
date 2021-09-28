@@ -22,6 +22,7 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
       setURL(e.target.value)
     }
   
+    // Basic validation - no protocol necessary, eg. "https://google.com" and "google.com" - both are correct.
     const isValidURL = (srcURL) => {
       let pattern = new RegExp('^(https?:\\/\\/)?'+         // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -34,8 +35,8 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
     }
 
     const handleButtonClick = (e) => {
-      if (e.keyCode === 13 || e.keyCode === undefined) {
-        e.preventDefault()
+      if (e.keyCode === 13 || e.keyCode === undefined) {  // Workaround for button press - 'FormGroup' component does not read 'Enter'
+        e.preventDefault()                                // as 'Form' element normally would.
         if (error) {
           setErrorState(false)
         }
@@ -44,7 +45,7 @@ const URLShortener = ({ containerStyle, formStyle, buttonStyle, inputStyle, link
           let srcURL = url;
     
           // Checks for the scheme/protocol of the link 
-          // - if no valid one exists, adds "HTTPS"
+          // - if no valid one exists, adds "HTTPS" as default.
           try {
             new URL(srcURL);
           } catch (_) { // MalformedURLException

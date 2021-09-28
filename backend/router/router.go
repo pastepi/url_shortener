@@ -103,7 +103,7 @@ func handleRedirect(w http.ResponseWriter, r *http.Request) {
 		panic("Could not find short URL in body of the request.")
 	}
 	newURL, _ := mysqldb.GetLinkByShortURL(shortURL)
-	if newURL == (models.Link{}) {
+	if newURL == (models.Link{}) { // Redirects to frontend homepage if 'shortURL' is not in the DB
 		newURL.OriginURL = net.JoinHostPort(os.Getenv("FRONTEND_HOST"), os.Getenv("FRONTEND_PORT"))
 	}
 	http.Redirect(w, r, newURL.OriginURL, http.StatusSeeOther)
