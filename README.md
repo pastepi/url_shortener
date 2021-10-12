@@ -1,6 +1,6 @@
 # URL Shortener
 ### React.js Frontend, Golang Backend.
-A very basic URL Shortener app that I've built as my first React-Golang fullstack project.
+A very basic URL Shortener app that I've built as my first React-Go fullstack project.
 
 Demo of the app is available at https://pastepi-go-url-shortener.netlify.app/ with backend being hosted using Heroku together with ClearDB - a MySQL Heroku addon.
 <p align="center">
