@@ -16,4 +16,4 @@ backend and frontend looks like or how a database is implemented for such apps.
 
 * main - most barebone version of the app, with not-so-good-looking hand-made CSS, link storage being a simple .JSON file.
 * dev - swapped CSS with [Material UI](https://mui.com/), validation now fully on the frontend.
-* dev-db - swapped the .JSON storage system with a proper DB using [MySQL driver](https://github.com/go-sql-driver/mysql)
+* dev-db - swapped the .JSON storage system with a proper DB using [MySQL driver](https://github.com/go-sql-driver/mysql).
