@@ -3,9 +3,9 @@
 A very basic URL Shortener app that I've built as my first React-Golang fullstack project.
 
 Demo of the app is available at https://pastepi-go-url-shortener.netlify.app/ with backend being hosted using Heroku together with ClearDB - a MySQL Heroku addon.
-
+<p align="center">
 <img src="https://i.imgur.com/tOTHFU3.gif" width="640" />
-
+</p>
 
 ### Goal
 Main focus of this project was to familiarise myself with fullstack app development using React and Go. There are definitely areas in this project that could use some improvement,
